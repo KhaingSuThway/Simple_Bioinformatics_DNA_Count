@@ -27,4 +27,7 @@ This project is an ECG (Electrocardiogram) analysis and visualization tool desig
 - **Expanded Arrhythmia Detection**: Aiming to add capabilities for detecting other types of arrhythmias.
 - **Mobile Application**: Development of a mobile version for on-the-go ECG analysis.
 
+## Try It Out
+You can test the application [here](https://kstsimpleecgwebapp.streamlit.app/).
+
 This project highlights a strong understanding of biomedical signal processing and software development. It demonstrates the ability to create practical, user-friendly applications. The skills showcased here are highly relevant in fields such as medical technology, bioinformatics, and health informatics.
