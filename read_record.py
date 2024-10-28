@@ -210,7 +210,7 @@ class RecordReader:
     """Class for reading ECG records."""
     
     @classmethod
-    def read(cls, path, number, channel, sampfrom, sampto):
+    def read(cls, number, channel, sampfrom, sampto):
         
         """
         Read an ECG record.
@@ -235,30 +235,29 @@ class RecordReader:
         """
         
         
-        fullpath = os.path.join(path, number)
-        signal = wfdb.rdrecord(fullpath,
+        
+        signal = wfdb.rdrecord(record_name=f"{number}",
+                               pn_dir='mitdb',
                                sampfrom=sampfrom,
                                sampto=sampto).p_signal[:, channel]
         
-        ann = wfdb.rdann(fullpath, 'atr',
-                            shift_samps=True,
-                            sampfrom=sampfrom,
-                            sampto=sampto)
+        ann = wfdb.rdann(record_name=f"{number}", pn_dir='mitdb',extension='atr',shift_samps=True,sampfrom=sampfrom,sampto=sampto)
         
         symbol = ann.symbol
         aux = ann.aux_note
         sample = ann.sample
-        if wfdb.rdrecord(fullpath).comments:
-            if wfdb.rdrecord(fullpath).comments[0]=='non atrial fibrillation' :
-                comment=wfdb.rdrecord(fullpath).comments[0]
-            elif wfdb.rdrecord(fullpath).comments[0]=='atrial fibrillation' :
-                comment=wfdb.rdrecord(fullpath).comments[0]
+        if wfdb.rdrecord(record_name=f"{number}",pn_dir='mitdb').comments:
+            if wfdb.rdrecord(record_name=f"{number}",pn_dir='mitdb').comments[0]=='non atrial fibrillation' :
+                comment=wfdb.rdrecord(record_name=f"{number}",pn_dir='mitdb').comments[0]
+            elif wfdb.rdrecord(record_name=f"{number}",pn_dir='mitdb').comments[0]=='atrial fibrillation' :
+                comment=wfdb.rdrecord(record_name=f"{number}",pn_dir='mitdb').comments[0]
             else:
                 comment=[]
                 
         else:
             comment=[]
-        sf = wfdb.rdrecord(fullpath).fs
+        sf = wfdb.rdrecord(record_name=f"{number}",
+                               pn_dir='mitdb').fs
         
         return Record(parent=number,
                       signal=signal,
@@ -275,8 +274,8 @@ def plot_signal_with_annotation(signal,annotation_symbols,annotation_indices,
     #create time axis
     time=np.arange(len(signal))/sampling_freq
     
-    pvc_percentage=100*(Counter(annotation_symbols)['V']/len(annotation_symbols))
-    pac_percentage=100*(Counter(annotation_symbols)['A']/len(annotation_symbols))
+    # pvc_percentage=100*(Counter(annotation_symbols)['V']/len(annotation_symbols))
+    # pac_percentage=100*(Counter(annotation_symbols)['A']/len(annotation_symbols))
     
         
     plt.tight_layout()
@@ -287,8 +286,8 @@ def plot_signal_with_annotation(signal,annotation_symbols,annotation_indices,
     plt.grid(True)
     plt.plot(time,signal)
     
-    plt.text(0.5, -0.23,f"PVC Percentage:{pvc_percentage:.2f} \nPAC Percentage:{pac_percentage:.2f}",
-             transform=plt.gca().transAxes, ha='center',fontsize=12)
+    # plt.text(0.5, -0.23,f"PVC Percentage:{pvc_percentage:.2f} \nPAC Percentage:{pac_percentage:.2f}",
+    #          transform=plt.gca().transAxes, ha='center',fontsize=12)
     
     for idx,symbol in zip(annotation_indices,annotation_symbols):
         plt.plot(idx/sampling_freq,signal[idx],ann_style)
